@@ -23,7 +23,7 @@ def mie_scatter (radius, lam,m):
     
     ssa = qqsca/qqext #single scattering albedo
     
-    return qqext, ssa
+    return qqsca, ssa
 
 #load refractive index of water data
 url = 'http://www.philiplaven.com/Segelstein.txt'
@@ -37,12 +37,19 @@ m = rfr + 1j*rfi
 radius1 = 7.5                     # in microns
 radius2 = 2.5                     # in microns
 lam1 = lam[np.where(np.logical_and(lam>=0.4, lam <=1.7))] # also in microns
-lam2 = lam[np.where(np.logical_and(lam>=10, lam <=30))] # also in microns
+rfr1 = rfr[np.where(np.logical_and(lam >= 0.4, lam <= 1.7))]
+rfi1 = rfi[np.where(np.logical_and(lam >= 0.4, lam <= 1.7))]
+m1 = rfr1 + 1j*rfi1 
 
-qe_a1, ssa_a1 = mie_scatter(radius1, lam1,m)
-qe_a2, ssa_a2 = mie_scatter(radius2, lam1,m)
-qe_b1, ssa_b1 = mie_scatter(radius1, lam2,m)
-qe_b2, ssa_b2 = mie_scatter(radius2, lam2,m)
+lam2 = lam[np.where(np.logical_and(lam>=10, lam <=30))] # also in microns
+rfr2 = rfr[np.where(np.logical_and(lam >= 10, lam <= 30))]
+rfi2 = rfi[np.where(np.logical_and(lam >= 10, lam <= 30))]
+m2 = rfr2 + 1j*rfi2
+
+qe_a1, ssa_a1 = mie_scatter(radius1, lam1,m1)
+qe_a2, ssa_a2 = mie_scatter(radius2, lam1,m1)
+qe_b1, ssa_b1 = mie_scatter(radius1, lam2,m2)
+qe_b2, ssa_b2 = mie_scatter(radius2, lam2,m2)
    
 plt.figure(figsize = (8,6))
 plt.plot(lam1*1000,qe_a1,'k--',label='d = 5 micron')
