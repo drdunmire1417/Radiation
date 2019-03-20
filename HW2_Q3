@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 20 09:56:59 2019
+
+@author: dedu0223
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+import miepython
+import urllib
+import segelstein
+
+lam1 = 0.555*10**-6 #meter
+r = 5*10**-6 #meter
+x = 2*np.pi*r/lam1
+k = 1
+url = 'http://www.philiplaven.com/Segelstein.txt'
+lam,rfr,rfi = segelstein.segel(url)
+lam = np.array(lam) #microns
+rfr = np.array(rfr)
+
+idx = np.abs(lam-0.555).argmin()
+rfr1 = rfr[idx]
+m = rfr1
+
+theta = np.linspace(0,np.pi,200)
+mu = np.cos(theta)
+
+[S1,S2] = miepython.mie_S1_S2(m,x,mu)
+qext, qsca, qback, g = miepython.mie(m,x)
+A = np.pi*r**2
+sigma_s = qsca*A
+P11 = ((2*np.pi)/(k**2*sigma_s))*(np.abs(S1)**2 + np.abs(S2)**2)
+
+plt.figure()
+plt.semilogy(theta, P11)
+plt.xlabel('theta')
+plt.ylabel('Scattering phase function')
+plt.savefig('3.jpg')
